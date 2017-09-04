@@ -1,0 +1,26 @@
+PODS:
+  - OrangeLabel (0.1.0)
+  - SimpleLayout-Swift (1.0.0)
+
+DEPENDENCIES:
+  - OrangeLabel (from `../`)
+  - SimpleLayout-Swift (from `https://github.com/pisces/SimpleLayout.git`)
+
+EXTERNAL SOURCES:
+  OrangeLabel:
+    :path: ../
+  SimpleLayout-Swift:
+    :git: https://github.com/pisces/SimpleLayout.git
+
+CHECKOUT OPTIONS:
+  SimpleLayout-Swift:
+    :commit: ee607f5596e7f00ea5cc2d39bda02bce71f9449f
+    :git: https://github.com/pisces/SimpleLayout.git
+
+SPEC CHECKSUMS:
+  OrangeLabel: 90ceea4372102d695f4c2882e9e93c41811117fe
+  SimpleLayout-Swift: 240355363e01df1b9afb6dffb78b04cbec015a3c
+
+PODFILE CHECKSUM: 95655c8fcd15ce52bdd7764e67dde5307404048c
+
+COCOAPODS: 1.2.1

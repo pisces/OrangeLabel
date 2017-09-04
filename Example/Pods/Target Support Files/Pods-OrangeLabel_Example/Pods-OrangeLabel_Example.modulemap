@@ -1,0 +1,6 @@
+framework module Pods_OrangeLabel_Example {
+  umbrella header "Pods-OrangeLabel_Example-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,7 +1,12 @@
 use_frameworks!
 
-target 'OrangeLabel_Example' do
+def import_pods
   pod 'OrangeLabel', :path => '../'
+  pod 'SimpleLayout-Swift', :git => 'https://github.com/pisces/SimpleLayout.git'
+end
+
+target 'OrangeLabel_Example' do
+  import_pods
 
   target 'OrangeLabel_Tests' do
     inherit! :search_paths

@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'OrangeLabel'
   s.version          = '0.1.0'
-  s.summary          = 'A short description of OrangeLabel.'
+  s.summary          = 'OrangeLabel is extensions of UILabel linkable, available line background and placeholder text'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -21,22 +21,12 @@ Pod::Spec.new do |s|
 TODO: Add long description of the pod here.
                        DESC
 
-  s.homepage         = 'https://github.com/hh963103@gmail.com/OrangeLabel'
-  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
+  s.homepage         = 'https://github.com/pisces/OrangeLabel.git'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'hh963103@gmail.com' => 'pisces@retrica.co' }
-  s.source           = { :git => 'https://github.com/hh963103@gmail.com/OrangeLabel.git', :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.author           = { 'Steve Kim' => 'hh963103@@gmail.com' }
+  s.source           = { :git => 'https://github.com/pisces/OrangeLabel.git', :tag => s.version.to_s }
 
   s.ios.deployment_target = '8.0'
 
   s.source_files = 'OrangeLabel/Classes/**/*'
-  
-  # s.resource_bundles = {
-  #   'OrangeLabel' => ['OrangeLabel/Assets/*.png']
-  # }
-
-  # s.public_header_files = 'Pod/Classes/**/*.h'
-  # s.frameworks = 'UIKit', 'MapKit'
-  # s.dependency 'AFNetworking', '~> 2.3'
 end

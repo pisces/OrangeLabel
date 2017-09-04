@@ -1,0 +1,6 @@
+framework module OrangeLabel {
+  umbrella header "OrangeLabel-umbrella.h"
+
+  export *
+  module * { export * }
+}

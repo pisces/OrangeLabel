@@ -1,0 +1,6 @@
+framework module SimpleLayout_Swift {
+  umbrella header "SimpleLayout-Swift-umbrella.h"
+
+  export *
+  module * { export * }
+}
