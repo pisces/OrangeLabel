@@ -1,5 +1,6 @@
 # OrangeLabel
 
+![Swift](https://img.shields.io/badge/Swift-3.1-orange.svg)
 [![CI Status](http://img.shields.io/travis/pisces/OrangeLabel.svg?style=flat)](https://travis-ci.org/pisces/OrangeLabel)
 [![Version](https://img.shields.io/cocoapods/v/OrangeLabel.svg?style=flat)](http://cocoapods.org/pods/OrangeLabel)
 [![License](https://img.shields.io/cocoapods/l/OrangeLabel.svg?style=flat)](http://cocoapods.org/pods/OrangeLabel)
