@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'OrangeLabel_Example' do
+  pod 'OrangeLabel', :path => '../'
+
+  target 'OrangeLabel_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
