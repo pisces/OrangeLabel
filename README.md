@@ -20,7 +20,7 @@ import OrangeLabel
 ```
 
 ## Example
-![Screenshot](Screenshot/ss_01.png)
+<img src="ScreenShot/ss_01.png" width="375" />
 
 ```swift
 let numbers = UILabelLinkType.custom(pattern: "[0-9]+")
