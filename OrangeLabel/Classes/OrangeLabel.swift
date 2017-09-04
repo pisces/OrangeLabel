@@ -1,5 +1,5 @@
 //
-//  OrangeUILabel.swift
+//  OrangeLabel.swift
 //  OrangeLabel
 //
 //  Created by Steve Kim on 09/04/2017.
