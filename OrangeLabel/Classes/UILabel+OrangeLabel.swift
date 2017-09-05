@@ -14,7 +14,7 @@ public enum UILabelLinkType {
     case url
     case custom(pattern: String)
     
-    var pattern: String {
+    public var pattern: String {
         switch self {
         case .mention: return "@[a-z0-9_-]+"
         case .hashtag: return "#[a-z0-9_-]+"
@@ -25,10 +25,10 @@ public enum UILabelLinkType {
 }
 
 public struct TouchedLink {
-    var type: UILabelLinkType
-    var range: NSRange
-    var rect: CGRect
-    var string: String
+    public var type: UILabelLinkType
+    public var range: NSRange
+    public var rect: CGRect
+    public var string: String
 }
 
 extension UILabel {
