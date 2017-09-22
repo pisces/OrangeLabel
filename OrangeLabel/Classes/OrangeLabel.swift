@@ -99,7 +99,7 @@ public class OrangeLabel: UILabel {
             lineRanges.forEach {
                 var range = NSRangeFromString($0)
                 let last = NSMakeRange(range.location + range.length - 1, 1)
-                if let count = try? text.substring(with: text.range(from: last)!).matches(pattern: "\\s").count, count > 0 {
+                if let lastRange = text.range(from: last), let count = try? text.substring(with: lastRange).matches(pattern: "\\s").count, count > 0 {
                     range.length -= 1
                 }
                 

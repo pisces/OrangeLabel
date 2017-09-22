@@ -25,7 +25,7 @@ class ViewController: UIViewController {
         label.lineBackgroundColor = .black
         label.lineBackgroundInset = UIEdgeInsets(top: -5, left: 5, bottom: -5, right: 5)
         label.numberOfLines = 0
-        label.text = "@steve Your selfie overed 1000 views @steve Your selfie overed 1000 views @steve Your selfie overed 1000 views @steve #hahaha http://retrica.co Your selfie overed 1000 views @steve Your selfie overed 1000 views @steve Your selfie overed 1000 views www.retrica.co @steve Your selfie overed 1000 views @steve Your selfie overed 1000 views @steve #hahaha Your selfie overed 1000 views @steve Your selfie overed 1000 views"
+        label.text = "@steve Your selfie overed 1000 views 👋👫 @steve Your selfie overed 1000 views @steve Your selfie overed 1000 views @steve #hahaha http://retrica.co Your selfie overed 1000 views @steve Your selfie overed 1000 views @steve Your selfie overed 1000 views www.retrica.co @steve Your selfie overed 1000 views @steve Your selfie overed 1000 views @steve #hahaha Your selfie overed 1000 views @steve Your selfie overed 1000 views 👋👫"
         label.textAlignment = .center
         label.textColor = .white
         
