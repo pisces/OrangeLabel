@@ -98,36 +98,31 @@ extension UILabel {
     // MARK: - Public methods
     
     public func boundingRect(forRange range: NSRange) -> CGRect {
-        guard let attributedText = attributedText else {return .zero}
-        
-        let layoutManager = NSLayoutManager()
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = textAlignment
-        
-        let textStorage = NSTextStorage(attributedString: attributedText)
-        textStorage.addLayoutManager(layoutManager)
-        textStorage.addAttribute(NSFontAttributeName, value: font.withSize(self.adjustedFontSize), range: NSMakeRange(0, textStorage.length))
-        textStorage.addAttribute(NSParagraphStyleAttributeName, value: paragraphStyle, range: NSMakeRange(0, textStorage.length))
-        
-        let textContainer = NSTextContainer(size: CGSize(width: bounds.size.width, height: CGFloat.greatestFiniteMagnitude))
-        textContainer.lineFragmentPadding = 0
-        textContainer.lineBreakMode = lineBreakMode
-        textContainer.maximumNumberOfLines = numberOfLines
-        layoutManager.addTextContainer(textContainer)
-        
+        guard let layoutManager = createLayoutManager(),
+            let textContainer = layoutManager.textContainers.first,
+            let textStorage = layoutManager.textStorage else {return .zero}
+        let advancedPoint = self.advancedPoint(forTextStorage: textStorage)
         var glyphRange = NSRange()
         layoutManager.characterRange(forGlyphRange: range, actualGlyphRange: &glyphRange)
-        let textRect = textStorage.boundingRect(with: bounds.size, options: .usesLineFragmentOrigin, context: nil)
         var rect = layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer)
-        rect.origin.y += max(0, (bounds.size.height - textRect.size.height)/2)
+        rect.origin.x += advancedPoint.x
+        rect.origin.y += advancedPoint.y
         return rect
+    }
+    public func characterIndex(forLocation location: CGPoint) -> Int {
+        guard let layoutManager = createLayoutManager(),
+            let textContainer = layoutManager.textContainers.first,
+            let textStorage = layoutManager.textStorage else {return -1}
+        let advancedPoint = self.advancedPoint(forTextStorage: textStorage)
+        let point = CGPoint(x: location.x - advancedPoint.x, y: location.y - advancedPoint.y)
+        return layoutManager.characterIndex(for: point, in: textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
     }
     public func contains(_ touch: UITouch, pattern: String?) -> Bool {
         var contains: Bool = false
-        forEach(forPattern: pattern) {
-            if boundingRect(forRange: $0.range).contains(touch.location(in: self)) {
+        for (_, value) in matches(forPattern: pattern) {
+            if boundingRect(forRange: value.range).contains(touch.location(in: self)) {
                 contains = true
-                return
+                break
             }
         }
         return contains
@@ -144,11 +139,12 @@ extension UILabel {
     public func touched(_ touch: UITouch?, type: UILabelLinkType) -> [TouchedLink] {
         guard let touch = touch, let text = text else {return []}
         var results = [TouchedLink]()
-        forEach(forPattern: type.pattern) {
-            let rect = boundingRect(forRange: $0.range)
-            if rect.contains(touch.location(in: self)) {
-                let string = text.substring(with: text.range(from: $0.range)!)
-                results.append(TouchedLink(type: type, range: $0.range, rect: rect, string: string))
+        for (_, value) in matches(forPattern: type.pattern) {
+            let index = characterIndex(forLocation: touch.location(in: self))
+            if index >= value.range.location, index <= value.range.location + value.range.length {
+                let rect = boundingRect(forRange: value.range)
+                let string = text.substring(with: text.range(from: value.range)!)
+                results.append(TouchedLink(type: type, range: value.range, rect: rect, string: string))
             }
         }
         return results
@@ -156,14 +152,46 @@ extension UILabel {
     
     // MARK - Internal methods
     
-    final func forEach(forPattern pattern: String?, execution: (NSTextCheckingResult) -> Void) {
-        guard let text = text, let pattern = pattern else {return}
-        try? text.matches(pattern: pattern).forEach { execution($0) }
+    final func matches(forPattern pattern: String?) -> EnumeratedSequence<Array<NSTextCheckingResult>> {
+        guard let text = text, let pattern = pattern else {return [].enumerated()}
+        do {
+            return try text.matches(pattern: pattern).enumerated()
+        } catch {
+            return [].enumerated()
+        }
     }
     final func updateAttributes(forType type: UILabelLinkType) {
         guard let attributes = attributesMap[type.pattern] else {return}
-        forEach(forPattern: type.pattern) {
-            self.mutableAttributedText?.setAttributes(attributes, range: $0.range)
+        for (_, value) in matches(forPattern: type.pattern) {
+            self.mutableAttributedText?.setAttributes(attributes, range: value.range)
         }
+    }
+    
+    // MARK - Private methods
+    
+    private func advancedPoint(forTextStorage textStorage: NSTextStorage) -> CGPoint {
+        let textRect = textStorage.boundingRect(with: bounds.size, options: .usesLineFragmentOrigin, context: nil)
+        return CGPoint(x: max(0, (bounds.size.width - textRect.size.width)/2), y: max(0, (bounds.size.height - textRect.size.height)/2))
+    }
+    private func createLayoutManager() -> NSLayoutManager? {
+        guard let attributedText = attributedText else {return nil}
+        
+        let layoutManager = NSLayoutManager()
+        let textContainer = NSTextContainer(size: bounds.size)
+        textContainer.lineFragmentPadding = 0
+        textContainer.lineBreakMode = lineBreakMode
+        textContainer.maximumNumberOfLines = numberOfLines
+        textContainer.layoutManager = layoutManager
+        
+        layoutManager.addTextContainer(textContainer)
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = textAlignment
+        
+        let textStorage = NSTextStorage(attributedString: attributedText)
+        textStorage.addLayoutManager(layoutManager)
+        textStorage.addAttribute(NSParagraphStyleAttributeName, value: paragraphStyle, range: NSMakeRange(0, textStorage.length))
+        textStorage.addAttribute(NSFontAttributeName, value: font.withSize(adjustedFontSize), range: NSMakeRange(0, textStorage.length))
+        return layoutManager
     }
 }
