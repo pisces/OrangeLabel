@@ -132,14 +132,20 @@ public class OrangeLabel: UILabel {
     override public func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
         
-        if isHighlightedLinkColorEnabled, let link = touchedLink(with: touches), let color = highlightedLinkColorMap[link.type.pattern] {
-            CATransaction.begin()
-            CATransaction.setAnimationDuration(0)
-            CATransaction.setDisableActions(true)
-            let path = UIBezierPath(rect: insetIncludedBoundingRect(forRange: link.range))
-            highlightedLinkLayer.fillColor = color.cgColor
-            highlightedLinkLayer.path = path.cgPath
-            CATransaction.commit()
+        DispatchQueue.global(qos: .userInteractive).async {
+            if self.isHighlightedLinkColorEnabled,
+                let link = self.touchedLink(with: touches),
+                let color = self.highlightedLinkColorMap[link.type.pattern] {
+                DispatchQueue.main.async {
+                    CATransaction.begin()
+                    CATransaction.setAnimationDuration(0)
+                    CATransaction.setDisableActions(true)
+                    let path = UIBezierPath(rect: self.insetIncludedBoundingRect(forRange: link.range))
+                    self.highlightedLinkLayer.fillColor = color.cgColor
+                    self.highlightedLinkLayer.path = path.cgPath
+                    CATransaction.commit()
+                }
+            }
         }
     }
     override public func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -152,8 +158,12 @@ public class OrangeLabel: UILabel {
         
         highlightedLinkLayer.path = nil
         
-        if let link = touchedLink(with: touches) {
-            linkTappedClosure?(link)
+        DispatchQueue.global(qos: .userInteractive).async {
+            if let link = self.touchedLink(with: touches) {
+                DispatchQueue.main.async {
+                    self.linkTappedClosure?(link)
+                }
+            }
         }
     }
     
