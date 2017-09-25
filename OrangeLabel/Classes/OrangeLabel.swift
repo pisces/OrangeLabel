@@ -31,6 +31,7 @@ public class OrangeLabel: UILabel {
         return CAShapeLayer()
     }()
     
+    public var isHighlightedLinkColorEnabled: Bool = false
     public var lineBackgroundInset: UIEdgeInsets = .zero {
         didSet { setNeedsDisplay() }
     }
@@ -131,7 +132,7 @@ public class OrangeLabel: UILabel {
     override public func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
         
-        if let link = touchedLink(with: touches), let color = highlightedLinkColorMap[link.type.pattern] {
+        if isHighlightedLinkColorEnabled, let link = touchedLink(with: touches), let color = highlightedLinkColorMap[link.type.pattern] {
             CATransaction.begin()
             CATransaction.setAnimationDuration(0)
             CATransaction.setDisableActions(true)
@@ -212,11 +213,11 @@ public class OrangeLabel: UILabel {
     }
     private func touchedLink(with touches: Set<UITouch>) -> TouchedLink? {
         var link: TouchedLink?
-        enabledLinkTypes.forEach {
-            let touched = self.touched(touches.first, type: $0)
+        for (_, value) in enabledLinkTypes.enumerated() {
+            let touched = self.touched(touches.first, type: value)
             if touched.count > 0 {
                 link = touched.first
-                return
+                break
             }
         }
         return link
