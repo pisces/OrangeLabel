@@ -132,20 +132,17 @@ public class OrangeLabel: UILabel {
     override public func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
         
-        DispatchQueue.global(qos: .userInteractive).async {
-            if self.isHighlightedLinkColorEnabled,
-                let link = self.touchedLink(with: touches),
-                let color = self.highlightedLinkColorMap[link.type.pattern] {
-                DispatchQueue.main.async {
-                    CATransaction.begin()
-                    CATransaction.setAnimationDuration(0)
-                    CATransaction.setDisableActions(true)
-                    let path = UIBezierPath(rect: self.insetIncludedBoundingRect(forRange: link.range))
-                    self.highlightedLinkLayer.fillColor = color.cgColor
-                    self.highlightedLinkLayer.path = path.cgPath
-                    CATransaction.commit()
-                }
-            }
+        if self.isHighlightedLinkColorEnabled,
+            let link = self.touchedLink(with: touches),
+            let color = self.highlightedLinkColorMap[link.type.pattern] {
+            
+            CATransaction.begin()
+            CATransaction.setAnimationDuration(0)
+            CATransaction.setDisableActions(true)
+            let path = UIBezierPath(rect: self.insetIncludedBoundingRect(forRange: link.range))
+            self.highlightedLinkLayer.fillColor = color.cgColor
+            self.highlightedLinkLayer.path = path.cgPath
+            CATransaction.commit()
         }
     }
     override public func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -158,12 +155,8 @@ public class OrangeLabel: UILabel {
         
         highlightedLinkLayer.path = nil
         
-        DispatchQueue.global(qos: .userInteractive).async {
-            if let link = self.touchedLink(with: touches) {
-                DispatchQueue.main.async {
-                    self.linkTappedClosure?(link)
-                }
-            }
+        if let link = self.touchedLink(with: touches) {
+            self.linkTappedClosure?(link)
         }
     }
     
