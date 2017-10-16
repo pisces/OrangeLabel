@@ -207,9 +207,9 @@ public class OrangeLabel: UILabel {
         super.font = isShowPlaceholder && placeholderFont != nil ? placeholderFont : _font
     }
     private func setText() {
+        super.text = isShowPlaceholder ? placeholder : _text
         setFont()
         setTextColor()
-        super.text = isShowPlaceholder ? placeholder : _text
     }
     private func setTextColor() {
         super.textColor = isShowPlaceholder && placeholderTextColor != nil ? placeholderTextColor : _textColor
