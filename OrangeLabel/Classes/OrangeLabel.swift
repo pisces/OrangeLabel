@@ -77,7 +77,14 @@ public class OrangeLabel: UILabel {
         }
     }
     override public var attributedText: NSAttributedString? {
-        didSet { updateAttributesAll() }
+        didSet {
+            guard let attributedText = attributedText else {return}
+            
+            let mutable = NSMutableAttributedString(attributedString: attributedText)
+            enabledLinkTypes.forEach { setAttributedString(mutable, for: $0) }
+            
+            super.attributedText = mutable
+        }
     }
     override public var textColor: UIColor? {
         didSet {

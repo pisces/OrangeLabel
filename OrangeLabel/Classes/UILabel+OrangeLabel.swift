@@ -160,10 +160,16 @@ extension UILabel {
             return [].enumerated()
         }
     }
+    final func setAttributedString(_ attributedString: NSMutableAttributedString, for type: UILabelLinkType) {
+        guard let attributes = attributesMap[type.pattern] else {return}
+        for (_, value) in matches(forPattern: type.pattern) {
+            attributedString.setAttributes(attributes, range: value.range)
+        }
+    }
     final func updateAttributes(forType type: UILabelLinkType) {
         guard let attributes = attributesMap[type.pattern] else {return}
         for (_, value) in matches(forPattern: type.pattern) {
-            self.mutableAttributedText?.setAttributes(attributes, range: value.range)
+            mutableAttributedText?.setAttributes(attributes, range: value.range)
         }
     }
     
