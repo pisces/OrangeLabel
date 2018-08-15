@@ -1,7 +1,7 @@
 {
   "name": "OrangeLabel",
   "version": "0.1.0",
-  "summary": "UILabel extensions for linkable, line background and highlited text",
+  "summary": "OrangeLabel is extensions of UILabel linkable, available line background and placeholder text",
   "description": "TODO: Add long description of the pod here.",
   "homepage": "https://github.com/pisces/OrangeLabel.git",
   "license": {
