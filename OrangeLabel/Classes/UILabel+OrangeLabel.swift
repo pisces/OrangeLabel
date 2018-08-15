@@ -41,12 +41,12 @@ extension UILabel {
     
     // MARK: - Properties
     
-    private var attributesMap: [String: [String: Any]] {
+    private var attributesMap: [String: [NSAttributedStringKey: Any]] {
         get {
-            if let attributesMap = objc_getAssociatedObject(self, &AssociatedKeys.AttributesMapName) as? [String: [String: Any]] {
+            if let attributesMap = objc_getAssociatedObject(self, &AssociatedKeys.AttributesMapName) as? [String: [NSAttributedStringKey: Any]] {
                 return attributesMap
             }
-            let attributesMap = [String: [String: Any]]()
+            let attributesMap = [String: [NSAttributedStringKey: Any]]()
             objc_setAssociatedObject(self, &AssociatedKeys.AttributesMapName, attributesMap, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return attributesMap
         }
@@ -63,7 +63,7 @@ extension UILabel {
         let context = NSStringDrawingContext()
         context.minimumScaleFactor = minimumScaleFactor;
         let mutable = NSMutableAttributedString(attributedString: attributedText)
-        mutable.setAttributes([NSFontAttributeName: font], range: NSMakeRange(0, mutable.length))
+        mutable.setAttributes([NSAttributedStringKey.font: font], range: NSMakeRange(0, mutable.length))
         mutable.boundingRect(with: bounds.size, options: .usesLineFragmentOrigin, context: context)
         return font.pointSize * context.actualScaleFactor;
     }
@@ -73,8 +73,9 @@ extension UILabel {
         let mutable = NSMutableAttributedString(attributedString: attributedText)
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = textAlignment
+        paragraphStyle.lineBreakMode = adjustsFontSizeToFitWidth ? paragraphStyle.lineBreakMode : lineBreakMode
         
-        mutable.setAttributes([NSParagraphStyleAttributeName: paragraphStyle, NSFontAttributeName: font.withSize(adjustedFontSize)], range: NSMakeRange(0, mutable.length))
+        mutable.setAttributes([NSAttributedStringKey.paragraphStyle: paragraphStyle, NSAttributedStringKey.font: font.withSize(adjustedFontSize)], range: NSMakeRange(0, mutable.length))
         
         let frameSetter = CTFramesetterCreateWithAttributedString(mutable)
         let path = CGMutablePath()
@@ -85,9 +86,9 @@ extension UILabel {
         return lines.map {
             let lineRange = CTLineGetStringRange($0)
             var range = NSMakeRange(lineRange.location, lineRange.length)
-            if (self.lineBreakMode == .byTruncatingHead ||
-                self.lineBreakMode == .byTruncatingMiddle ||
-                self.lineBreakMode == .byTruncatingTail) &&
+            if (lineBreakMode == .byTruncatingHead ||
+                lineBreakMode == .byTruncatingMiddle ||
+                lineBreakMode == .byTruncatingTail) &&
                 $0 === lines.last {
                 range.length = mutable.length - range.location
             }
@@ -99,23 +100,15 @@ extension UILabel {
     
     public func boundingRect(forRange range: NSRange) -> CGRect {
         guard let layoutManager = createLayoutManager(),
-            let textContainer = layoutManager.textContainers.first,
-            let textStorage = layoutManager.textStorage else {return .zero}
-        let advancedPoint = self.advancedPoint(forTextStorage: textStorage)
+            let textContainer = layoutManager.textContainers.first else {return .zero}
         var glyphRange = NSRange()
         layoutManager.characterRange(forGlyphRange: range, actualGlyphRange: &glyphRange)
-        var rect = layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer)
-        rect.origin.x += advancedPoint.x
-        rect.origin.y += advancedPoint.y
-        return rect
+        return layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer)
     }
     public func characterIndex(forLocation location: CGPoint) -> Int {
         guard let layoutManager = createLayoutManager(),
-            let textContainer = layoutManager.textContainers.first,
-            let textStorage = layoutManager.textStorage else {return -1}
-        let advancedPoint = self.advancedPoint(forTextStorage: textStorage)
-        let point = CGPoint(x: location.x - advancedPoint.x, y: location.y - advancedPoint.y)
-        return layoutManager.characterIndex(for: point, in: textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
+            let textContainer = layoutManager.textContainers.first else {return -1}
+        return layoutManager.characterIndex(for: location, in: textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
     }
     public func contains(_ touch: UITouch, pattern: String?) -> Bool {
         var contains: Bool = false
@@ -131,7 +124,7 @@ extension UILabel {
         return contains(touch, pattern: type.pattern)
     }
     @discardableResult
-    public func setAttributes(_ attributes: [String: Any], type: UILabelLinkType) -> Self {
+    public func setAttributes(_ attributes: [NSAttributedStringKey: Any], type: UILabelLinkType) -> Self {
         attributesMap[type.pattern] = attributes
         updateAttributes(forType: type)
         return self
@@ -196,8 +189,8 @@ extension UILabel {
         
         let textStorage = NSTextStorage(attributedString: attributedText)
         textStorage.addLayoutManager(layoutManager)
-        textStorage.addAttribute(NSParagraphStyleAttributeName, value: paragraphStyle, range: NSMakeRange(0, textStorage.length))
-        textStorage.addAttribute(NSFontAttributeName, value: font.withSize(adjustedFontSize), range: NSMakeRange(0, textStorage.length))
+        textStorage.addAttribute(NSAttributedStringKey.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, textStorage.length))
+        textStorage.addAttribute(NSAttributedStringKey.font, value: font.withSize(adjustedFontSize), range: NSMakeRange(0, textStorage.length))
         return layoutManager
     }
 }
