@@ -16,7 +16,7 @@ public class OrangeLabel: UILabel {
     
     private var initializedSubviews: Bool = false
     private var isShowPlaceholder: Bool {
-        return placeholder != nil && (_text == nil || _text!.characters.count < 1)
+        return placeholder != nil && (_text == nil || _text!.count < 1)
     }
     private var scaledLineBackgroundInset: UIEdgeInsets {
         let scale = adjustedFontSize / font!.pointSize
@@ -139,16 +139,21 @@ public class OrangeLabel: UILabel {
     override public func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
         
-        if self.isHighlightedLinkColorEnabled,
-            let link = self.touchedLink(with: touches),
-            let color = self.highlightedLinkColorMap[link.type.pattern] {
+        if isHighlightedLinkColorEnabled,
+            let link = touchedLink(with: touches),
+            let color = highlightedLinkColorMap[link.type.pattern] {
+            
+            layer.sublayers.map {
+                guard !$0.contains(highlightedLinkLayer) else {return}
+                layer.addSublayer(highlightedLinkLayer)
+            }
             
             CATransaction.begin()
             CATransaction.setAnimationDuration(0)
             CATransaction.setDisableActions(true)
-            let path = UIBezierPath(rect: self.insetIncludedBoundingRect(forRange: link.range))
-            self.highlightedLinkLayer.fillColor = color.cgColor
-            self.highlightedLinkLayer.path = path.cgPath
+            let path = UIBezierPath(rect: insetIncludedBoundingRect(forRange: link.range))
+            highlightedLinkLayer.fillColor = color.cgColor
+            highlightedLinkLayer.path = path.cgPath
             CATransaction.commit()
         }
     }
@@ -162,9 +167,7 @@ public class OrangeLabel: UILabel {
         
         highlightedLinkLayer.path = nil
         
-        if let link = self.touchedLink(with: touches) {
-            self.linkTappedClosure?(link)
-        }
+        touchedLink(with: touches).map { linkTappedClosure?($0) }
     }
     
     // MARK: - REView protocol
@@ -174,7 +177,6 @@ public class OrangeLabel: UILabel {
     func initProperties() {
         _font = font
         _textColor = textColor
-        layer.addSublayer(highlightedLinkLayer)
     }
     func setUpSubviews() {
     }

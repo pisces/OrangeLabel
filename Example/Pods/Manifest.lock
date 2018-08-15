@@ -8,7 +8,7 @@ DEPENDENCIES:
 
 EXTERNAL SOURCES:
   OrangeLabel:
-    :path: ../
+    :path: "../"
   SimpleLayout-Swift:
     :git: https://github.com/pisces/SimpleLayout.git
 
@@ -18,9 +18,9 @@ CHECKOUT OPTIONS:
     :git: https://github.com/pisces/SimpleLayout.git
 
 SPEC CHECKSUMS:
-  OrangeLabel: 90ceea4372102d695f4c2882e9e93c41811117fe
+  OrangeLabel: aec73ba1186b4ae1a3478e315c526b7f4c1ba167
   SimpleLayout-Swift: 240355363e01df1b9afb6dffb78b04cbec015a3c
 
 PODFILE CHECKSUM: 95655c8fcd15ce52bdd7764e67dde5307404048c
 
-COCOAPODS: 1.2.1
+COCOAPODS: 1.5.3
